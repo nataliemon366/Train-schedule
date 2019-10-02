@@ -1,42 +1,85 @@
 // /Initialize Firebase
-var Config = {
-    apiKey: "AIzaSyAE_Y7YtxbLONdomtX0e1sYQRqC3hMJhxU",
-    authDomain: "train-schedule-91a40.firebaseapp.com",
-    databaseURL: "https://train-schedule-91a40.firebaseio.com",
-    projectId: "train-schedule-91a40",
-    storageBucket: "",
-    messagingSenderId: "946229504191",
-    appId: "1:946229504191:web:492ac76e91d71d4d4afe0a"
-  };
-    // Initialize Firebase
-    firebase.initializeApp(Config);
-  
-    
-    var trainData = firebase.database();
-  
-    $("#addTrainBtn").on("click", function() {
-     var trainName = $("#trainNameInput").val().trim();
-      var destination= $("#destinationInput").val().trim();
-      var firstTrain= moment($("#firstTrainInput").val().trim(),"HH:mm").subtract(10,"years").format("X");
-      var frequency = $("#frequencyInput").val().trim();
-      
-     console.log(firstTrain);
-     return false;
+var config = {
+  apiKey: "AIzaSyBeAXTYszBs_aIy5un3KPwahhI4BtGlfPM",
+  authDomain: "trainschedule-c3172.firebaseapp.com",
+  databaseURL: "https://trainschedule-c3172.firebaseio.com",
+  projectId: "trainschedule-c3172",
+  storageBucket: "trainschedule-c3172.appspot.com",
+  messagingSenderId: "366682047633"
+};
+firebase.initializeApp(config)
+var dataRef = firebase.database();
 
-    });
-    trainData.ref().on("child_added", function(snapshot){
-        var name =snapshot.val().name;
-        var destination =snapshot.val().destination;
-        var frequency =snapshot.val().frequency;
-        var firstTrain =snapshot.val().firstTrain;
+var trainObject = {
+  name: "",
+  destination: "",
+  frequency: "",
+  nextArrival: "",
+  minutesAway: "",
+  initialize: function (name, destination, frequency, nextArrival, minutesAway) {
+    this.name = name;
+    this.destination = destination;
+    this.frequency = frequency;
+    this.nextArrival = nextArrival;
+    this.minutesAway = minutesAway;
+  }
+}
 
-        var remainder =moment().diff(moment.unix(firstTrain),"minutes")%frequency;
-        var minutes = frequency -remainder;
-        var arrival = moment().add(minutes,"m").format("hh:mm A");
+function updateDisplay(trainObject) {
+  var addedRow = $("<tr>")
+  debugger
+  for (key in trainObject) {
+    var addedEntry = $("<td>");
+    addedEntry.text(trainObject[key]);
+    addedRow.append(addedEntry);
+  }
+  $("#trainList").append(addedRow);
+}
+$("#toAddButton").on("click", function (event) {
+  event.preventDefault();
+  debugger;
+  var name = $("#addedTrainName").val().trim();
+  var destination = $("#addedDestination").val().trim();
+  var frequency = $("#addedFrequency").val().trim();
+  var time = $("#addedTime").val().trim();
+  dataRef.ref().push({
 
-        console.log(remainder);
-        console.log(minutes);
-        console.log(arrival);
+    name: name,
+    destination: destination,
+    frequency: frequency,
+    time: time,
+  });
+  $("#addedTrainName").val("");
+  $("#addedDestination").val("");
+  $("#addedFrequency").val("");
+  $("#addedTime").val("");
 
-        $("#trainTable >tBody").append("<tr><td>"+name+"</td><td>"+destination+ "</td><td>" +frequency+ "</td><td>"+arrival+"</td><td>"+minutes+"</td></tr>");
-    })
+  var trainToBeAdded = mathMagic(name, destination, frequency, time);
+})
+
+function mathMagic(name, destination, frequency, time) {
+  var firstTimeConverted = moment(time, "HH:mm").subtract(1, "years");
+  var currentTime = moment();
+  var diffTime = currentTime.diff(firstTimeConverted, "minutes");
+  var minutesAway = diffTime % frequency;
+  var tMinutesTillTrain = frequency - minutesAway;
+  var nextArrival = moment().add(tMinutesTillTrain, "minutes");
+  var trainToBeAdded = new trainObject.initialize(name, destination, frequency, nextArrival.format("hh:mm", "a"), tMinutesTillTrain);
+  return trainToBeAdded;
+}
+dataRef.ref().on("child_added", function (childSnapshot) {
+  var storedTrain = mathMagic(childSnapshot.val().name, childSnapshot.val().destination, childSnapshot.val().frequency, childSnapshot.val().time);
+  updateDisplay(storedTrain);
+}, function (errorObject) {
+  console.log("Errors handled: " + errorObject.code);
+});
+setInterval(function () {
+  $("#trainList").empty();
+  dataRef.ref().on("child_added", function (childSnapshot) {
+    var storedTrain = mathMagic(childSnapshot.val().name, childSnapshot.val().destination, childSnapshot.val().frequency, childSnapshot.val().time);
+    updateDisplay(storedTrain);
+  }, function (errorObject) {
+    console.log("Errors handled: " + errorObject.code);
+  });
+
+}, 60000)

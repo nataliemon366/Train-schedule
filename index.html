@@ -2,95 +2,84 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="./assets/css/style.css">
-
+  <meta charset="utf-8">
+  <title>Train Schedule</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+ 
 </head>
 
 <body>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    </link>
-    <!-- // jquery js -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
-    <div class="container">
-        <div class="jumbotron" style="background-color:grey; color:white">
-            <h1 class="text-center">Anytime is Train Time!</h1>
-            <h3 class="text-center">CHOO CHOO!!</h3>
+
+  <div class="container" style="font-family: cursive" >
+      <div class="jumbotron text-center p-3 mt-3 " style="background:blueviolet;color: white">
+            <h1 class="display-4" style="font-weight:450" > <i class="fa fa-cog"></i> Train Schedule <i class="fa fa-cog"></i></h1>
+            <h2> <i class="fa fa-cogs" ></i> All aboard!!! <i class="fa fa-cogs"></i> </h2>
+      </div>
+      <div class="card  my-3" style="border:solid steelblue; border-width: 5px;" >
+                
+        <div class="card-header" style="background:steelblue; color:white"> 
+             <i class="fa fa-list-alt"></i> Current Train Schedule
         </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-primary">
-                    <div class="panel panel-heading">
-                        <h3 class="panel title"><strong>CURRENT TRAIN SCHEDULE</strong></h3>
-                    </div>
-                    <div class="panel-body">
-                        <table class="table table-hover" id="tainTable">
-                            <thead>
-                                <tr>
-                                    <th>Train Name</th>
-                                    <th>Destination</th>
-                                    <th>Frequency</th>
-                                    <th>Next Arrival</th>
-                                    <th>Minutes Away</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="panel panel-primary">
-                        <div class="panel panel-heading">
-                            <h3 class="panel-title"><strong>ADD TRAIN</strong></h3>
-                        </div>
-                        <div class="panel-body">
-                            <form>
-                                <div class="form-group">
-                                    <label for="">Train Name</label>
-                                    <input type="text" class="form-control" id="trainNameInput">
-                                </div>
-                                <div class="form-group">
-                                    <label for="">Destination</label>
-                                    <input type="text" class="form-control" id="destinationInput">
-                                </div>
-                                <div class="form-group">
-                                    <label for="">First Train Time (HH:mm - Military Time)</label>
-                                    <input type="text" class="form-control" id="firstTrainInput">
-                                </div>
-                                <div class="form-group">
-                                    <label for="">Frequency (Min)</label>
-                                    <input type="text" class="form-control" id="frequencyInput">
-                                </div>
-                                
-                                <button type="submit" class="btn btn -primary" id="addtrainBtn">Submit!</button>
-                            </form>
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
+        <div class="card m-3" id="topArticles">
+                <div class="card"> 
+                 <!-- table goes here -->
+                 <table class="table" >
+                    <thead>
+                      <tr>
+                        <th scope="col">Train Name</th>
+                        <th scope="col">Destination</th>
+                        <th scope="col">Frequency (mins)</th>
+                        <th scope="col">Next Arrival</th>
+                        <th scope="col">Minutes Away</th>
+                      </tr>
+                    </thead>
+                    <tbody id="trainList">
+              
+                    </tbody>
+                  </table>
+               </div>
         </div>
+    </div>
+    <div class="card pb-2" style="border:solid steelblue; border-width: 2px;">
+        <div class="card-header mg-lg " style="background:steelblue;color: whitesmoke ">
+          <i class="fa fa-train" aria-hidden="true"></i> Add Train
+        </div>
+        <div class="container mt-3">
+            <form>
+                <div class="form-group">
+                        <label for="addedTrainName" >Train Name</label>
+                        <input id="addedTrainName" type="text" class="form-control" placeholder="Thomas The Tank Engine">
+                </div>
+                <div class="form-group"> 
+                    <label for="addedDestination">Destination</label>
+                    <input id="addedDestination" type="text" class="form-control" placeholder="Promise Land">    
+                </div>
+                <div class="form-group">
+                        <!-- need to be change to a dropdown box -->
+                        <label for="addedTime" >First Train Time (HH:mm - military time)</label>
+                        <input type="text" class="form-control" id="addedTime" placeholder="15:15">
+                </div>
+                <div class="form-group">
+                        <!-- need to be change to a dropdown box -->
+                        <label for="addedFrequency" >Frequency</label>
+                        <input type="text" class="form-control" id="addedFrequency" placeholder="15">
+                </div>
+                <!-- buttoms -->
+                <button id="toAddButton" class="btn btn-dark" type="submit"> <i class="fa fa-plus-circle pr-1"></i> Add </button>
+             </form>
 
-
-
-
-
-
-
-
-
-        <script src="./assets/javascript/app.js"></script>
+        </div>
+      </div>
+        
+  </div>
+    <script src="https://www.gstatic.com/firebasejs/5.4.0/firebase.js"></script>
+    <script src="./assets/javascript/app.js"></script>
+    
 </body>
 
 </html>
