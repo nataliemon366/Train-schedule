@@ -1,85 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Train Schedule</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
- 
-</head>
 
+	<title>Train Schedule</title>
+
+	<!---bootstrap-->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Javascript -->
+  	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+  	  <!-- Custom CSS -->
+ 	 <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
+  	 <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+
+	<!--firebase-->
+	<script src="https://www.gstatic.com/firebasejs/7.1.0/firebase-app.js"></script>
+
+	<!-- Link to Moment.js should go here -->
+ 	 <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+
+
+</head>
 <body>
 
+<!-- Main Bootstrap Search -->
+  <div class="container">
 
-  <div class="container" style="font-family: cursive" >
-      <div class="jumbotron text-center p-3 mt-3 " style="background:blueviolet;color: white">
-            <h1 class="display-4" style="font-weight:450" > <i class="fa fa-cog"></i> Train Schedule <i class="fa fa-cog"></i></h1>
-            <h2> <i class="fa fa-cogs" ></i> All aboard!!! <i class="fa fa-cogs"></i> </h2>
-      </div>
-      <div class="card  my-3" style="border:solid steelblue; border-width: 5px;" >
-                
-        <div class="card-header" style="background:steelblue; color:white"> 
-             <i class="fa fa-list-alt"></i> Current Train Schedule
-        </div>
-        <div class="card m-3" id="topArticles">
-                <div class="card"> 
-                 <!-- table goes here -->
-                 <table class="table" >
-                    <thead>
-                      <tr>
-                        <th scope="col">Train Name</th>
-                        <th scope="col">Destination</th>
-                        <th scope="col">Frequency (mins)</th>
-                        <th scope="col">Next Arrival</th>
-                        <th scope="col">Minutes Away</th>
-                      </tr>
-                    </thead>
-                    <tbody id="trainList">
-              
-                    </tbody>
-                  </table>
-               </div>
-        </div>
+    <!-- Jumbotron for Title -->
+    <div class="jumbotron" style= "background-image: url(https://images.unsplash.com/photo-1539021929149-88832c42bc15?ixlib=rb-1.2.1&dpr=2&auto=format&fit=crop&w=416&h=312&q=60); background-repeat: no-repeat; height: 300px;">
+      <h1 class="center-this" style="margin-left:10%"><strong><i class="trainTitle"></i><br>Train Schedule</strong></h1>
     </div>
-    <div class="card pb-2" style="border:solid steelblue; border-width: 2px;">
-        <div class="card-header mg-lg " style="background:steelblue;color: whitesmoke ">
-          <i class="fa fa-train" aria-hidden="true"></i> Add Train
-        </div>
-        <div class="container mt-3">
-            <form>
-                <div class="form-group">
-                        <label for="addedTrainName" >Train Name</label>
-                        <input id="addedTrainName" type="text" class="form-control" placeholder="Thomas The Tank Engine">
-                </div>
-                <div class="form-group"> 
-                    <label for="addedDestination">Destination</label>
-                    <input id="addedDestination" type="text" class="form-control" placeholder="Promise Land">    
-                </div>
-                <div class="form-group">
-                        <!-- need to be change to a dropdown box -->
-                        <label for="addedTime" >First Train Time (HH:mm - military time)</label>
-                        <input type="text" class="form-control" id="addedTime" placeholder="15:15">
-                </div>
-                <div class="form-group">
-                        <!-- need to be change to a dropdown box -->
-                        <label for="addedFrequency" >Frequency</label>
-                        <input type="text" class="form-control" id="addedFrequency" placeholder="15">
-                </div>
-                <!-- buttoms -->
-                <button id="toAddButton" class="btn btn-dark" type="submit"> <i class="fa fa-plus-circle pr-1"></i> Add </button>
-             </form>
 
+<!-- Row for Train Schedule -->
+    <div class="row">
+      <div class="col-sm-12">
+        <br>
+        <!-- First panel is for handling train schedule -->
+        <div class="panel panel-success">
+          <div class="panel-heading" id= "heading">
+            <h3 class="panel-title"><strong><i class="fa  fa-list-alt"></i> Current Train Schedule <span class="glyphicon glyphicon-hourglass">Current-Time:<i id= "current-time"></i></strong></span></h3>
+          </div>
+
+          <div class="panel-body">
+
+         <table class="table table-striped" id="schedule">
+            <thead>
+              <tr>
+                <th>Train Name</th>
+                <th>Destination</th>
+                <th>Frequency (min)</th>
+                <th>Next Arrival</th>
+                <th>Minutes Away</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Disney Express</td>
+                <td>Kit Dang</td>
+                <td>25</td>
+                <td>5:35 pm</td>
+                <td>10</td>
+              </tr>
+            </tbody>
+          
+              <tr>
+                <td>PIXAR Express</td>
+                <td>Ashley</td>
+                <td>25</td>
+                <td>5:35 pm</td>
+                <td>10</td>
+              </tr>
+            
+          </table>
+       </div>
+       </div> 
+
+ <!-- Row for adding a train -->
+    <div class="row">
+      <div class="col-sm-12">
+        <br>
+        <!-- First panel is for handling the add parameters -->
+        <div class="panel panel-success">
+          <div class="panel-heading">
+            <h3 class="panel-title"><strong><i class="fa  fa-list-alt"></i> Add a Train</strong></h3>
+          </div>
+          <div class="panel-body">
+
+            <!-- Here we create an HTML Form for handling the inputs-->
+            <form role="form">
+
+              <!-- Here we create the text box for capturing the imput term-->
+              <div class="form-group">
+                <label for="trainName">Train Name</label>
+                <input type="text" class="form-control" id="trainName" placeholder="Natalie Express">
+              </div>
+
+              <!-- Here we capture the destination  -->
+              <div class="form-group">
+                <label for="destination">Destination</label>
+                <input type="text" class="form-control" id="destination" placeholder="La La Land">
+              </div>
+
+              <!-- Here we capture the first train time-->
+              <div class="form-group">
+                <label for="firstTrain"> First Train Time (HH:mm-military time)</label>
+                <input type="text" class="form-control" id="firstTrain" placeholder="06:00">
+              </div>
+
+              <!-- Here we capture the Frequency -->
+              <div class="form-group">
+                <label for="Frequency">Frequency (min)</label>
+                <input type="text" class="form-control" id="frequency" placeholder="10">
+              </div>
+
+              <!-- Here we have our final submit button -->
+              <button type="submit" class="btn btn-success" id="submit"><i class="fa fa-search"></i> Submit</button>
+     
+            </form>
+          </div>
         </div>
       </div>
-        
-  </div>
-    <script src="https://www.gstatic.com/firebasejs/5.4.0/firebase.js"></script>
-    <script src="./assets/javascript/app.js"></script>
-    
-</body>
+    </div>   
 
+<script type="text/javascript" src="./assets/javascript/app.js"></script>
+</body>
 </html>
